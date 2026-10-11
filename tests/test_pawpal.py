@@ -20,7 +20,7 @@ def test_pet_task_relationship_and_owner_task_collection():
     assert owner.get_all_tasks() == []
 
 
-def test_recurring_task_completion_creates_next_occurrence():
+def test_recurrence_logic_daily_task_creates_following_day():
     pet = Pet("Mochi", "dog")
     task = Task(
         "Medication",
@@ -80,7 +80,7 @@ def test_scheduler_prioritizes_tasks_within_daily_budget():
     assert "Grooming" in scheduler.explain_plan()
 
 
-def test_scheduler_sort_by_time_orders_deadlines_and_puts_undated_last():
+def test_sorting_correctness_returns_tasks_in_chronological_order():
     pet = Pet("Mochi", "dog")
     later = Task("Evening walk", "walk", 20, pet=pet, due_time=datetime(2026, 10, 10, 18))
     undated = Task("Play", "enrichment", 15, pet=pet)
@@ -125,7 +125,7 @@ def test_conflict_detection_reports_overlaps_and_budget_overrun():
     assert any("daily budget" in conflict for conflict in conflicts)
 
 
-def test_conflict_detection_identifies_same_and_different_pets():
+def test_conflict_detection_flags_duplicate_times():
     mochi = Pet("Mochi", "dog")
     whiskers = Pet("Whiskers", "cat")
     walk = Task("Walk", "walk", 30, pet=mochi)

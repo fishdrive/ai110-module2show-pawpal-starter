@@ -54,19 +54,34 @@ Owner: Jordan | Date: 2026-10-10
 
 ## 🧪 Testing PawPal+
 
+//command to run tests is python3 -m pytest
+//Tests covered: 
+Pet/task ownership, adding and removing tasks, and collecting an owner’s tasks.
+Daily and weekly recurrence, including creating the next occurrence, undated daily tasks, one-time tasks, and preventing repeat completion from creating duplicates.
+Schedule priority ordering, daily time-budget limits, assigned start times, and reporting skipped tasks.
+Chronological deadline sorting, with undated tasks last.
+Ranking pets by pending task minutes while excluding completed and future-due tasks.
+Conflict warnings for overlapping tasks on the same pet or different pets, plus daily budget overruns.
+Task validation and filtering by pet object or name, task type, and completion status.
+
 ```bash
-# Run the full test suite:
-pytest
+Sample test output:
+
+```text
+$ python3 -m pytest
+tests/test_pawpal.py .........                                            [100%]
+
+9 passed in 0.04s
+```
+//Confidence is 5 stars considering 9 tests were passed in 0.04s. 
 
 # Run with coverage:
 pytest --cov
 ```
+Installed pytest-cov and reran python3 -m pytest --cov successfully: 9 tests passed. Total coverage is 92% (pawpal_system.py: 87%; tests: 100%)
 
-Sample test output:
 
-```
-# Paste your pytest output here
-```
+
 
 ## 📐 Smarter Scheduling
 
@@ -93,3 +108,5 @@ Describe your app in numbered steps so a reader can follow along without watchin
 5. <!-- Add more steps as needed -->
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+
+
