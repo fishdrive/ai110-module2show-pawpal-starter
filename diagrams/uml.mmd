@@ -5,7 +5,7 @@ classDiagram
         +str phone
         +list pets
         +int available_minutes_per_day
-        +str preferences
+        +dict preferences
         +add_pet(pet) None
         +remove_pet(pet) None
         +get_all_tasks() list
@@ -29,14 +29,16 @@ classDiagram
     class Task {
         +str title
         +str task_type
-        +Pet pet
+        +Pet? pet
         +int duration_minutes
         +str priority
-        +time due_time
+        +datetime due_time
+        +datetime scheduled_start
         +str frequency
         +bool is_completed
         +str notes
-        +mark_complete() Task
+        +mark_task_complete(now=None) Optional[Task]
+        +mark_complete(now=None) Optional[Task]
         +reschedule(new_time) None
         +is_overdue() bool
         +is_high_priority() bool
@@ -46,16 +48,20 @@ classDiagram
     class Scheduler {
         +Owner owner
         +list daily_plan
+        +list skipped_tasks
         +date date
+        +time start_time
         +generate_daily_plan() list
-        +sort_tasks() list
+        +sort_tasks(tasks=None) list
+        +sort_by_time(tasks=None) list
+        +rank_pet_workloads() list
         +detect_conflicts() list
         +get_overdue_tasks() list
-        +filter_tasks(pet=None, task_type=None, status=None) list
+        +filter_tasks(pet: Pet | str=None, task_type=None, status=None) list
         +explain_plan() str
     }
 
     Owner "1" --> "0..*" Pet : owns
-    Pet "1" --> "0..*" Task : needs
+    Pet "0..1" --> "0..*" Task : assigned
     Scheduler "1" --> "1" Owner : plans for
     Scheduler "1" --> "0..*" Task : schedules

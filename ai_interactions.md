@@ -2,6 +2,10 @@
 
 > **Stretch features only.** Only fill in the sections that apply to stretch features you attempted. If you did not attempt a stretch feature, leave its section blank or delete it. This file is not required for the core project.
 
+//I created a third algorithm called scheduler rank pet workloads. This algorithm totaled each pets pending care minutes due by the schedulers date and ranked pets from highest workload to lowest. Pawpal system, test pawpal and uml were all modified for this. The agent created me an algorithm exactly how I wanted, so no changes were made. 
+
+
+
 ---
 
 ## Agent Workflow (SF7)

@@ -2,15 +2,12 @@
 
 ## 1. System Design
 
-**a. Initial design**
+//Three core actions that I would add. First would be to schedule daily walks for the pet. Then, the owners would be able to add scheduled grooming appointments their animals needs. Lastly, the owner would need to be able to add a pet in order for this app to work. 
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
 
-**b. Design changes**
+//I included 4 different classes. This included the owner class, pet class, task class and scheduler class. The owner class included information about the owner and their preferences and avalibilty for the pet. The pet class listed the pet and all of the information necessary for this pet: ex.. weight, health information. The task class included tasks and how it related to the pet. Lastly the scheduler class included the plans and what times they were being scheduled. 
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+//I did not make any design changes
 
 ---
 
@@ -23,8 +20,8 @@
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+//My scheduler has a nested scan that makes it easier to report every conflicting pair, which is necessary when many tasks can overlap. However, sorting intervals and comparing tasks would be simpler and faster, but doesn't account for when many tasks overlap. This tradeoff is fine because comparing tasks could miss conflicts when I need all warnings. 
+
 
 ---
 

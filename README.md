@@ -44,14 +44,12 @@ pip install -r requirements.txt
 
 ## 🖥️ Sample Output
 
-Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
-
 ```
-# e.g.:
-# Daily plan for Biscuit (Golden Retriever):
-#   08:00 — Morning walk (30 min) [priority: high]
-#   09:00 — Feeding (10 min) [priority: high]
-#   ...
+Today's Schedule
+Owner: Jordan | Date: 2026-10-10
+08:00 - Breakfast for Prime (10 min, high priority)
+08:10 - Medication for Timus (5 min, high priority)
+08:15 - Morning walk for Timus (30 min, medium priority)
 ```
 
 ## 🧪 Testing PawPal+
@@ -72,14 +70,17 @@ Sample test output:
 
 ## 📐 Smarter Scheduling
 
-> Fill in once you've implemented scheduling logic.
-
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Daily plan generation | `Scheduler.generate_daily_plan()` | Schedules incomplete tasks due by the selected date, starting at 8:00 AM by default, without exceeding the owner's daily time budget. |
+| Priority sorting | `Scheduler.sort_tasks()` | Orders tasks by high, medium, then low priority; ties use earlier deadlines and task titles. |
+| Deadline sorting | `Scheduler.sort_by_time()` | Orders tasks by deadline, placing tasks without a deadline last. |
+| Task filtering | `Scheduler.filter_tasks()` | Filters by pet instance or name, task type, and completion status. |
+| Conflict detection | `Scheduler.detect_conflicts()` | Warns about overlapping tasks, including same-pet and cross-pet conflicts, missed deadlines, and budget overruns. |
+| Overdue task lookup | `Scheduler.get_overdue_tasks()`, `Task.is_overdue()` | Finds incomplete tasks whose deadlines have passed. |
+| Recurring tasks | `Task.mark_task_complete()` | Completing a daily or weekly task creates the next occurrence and adds it to the pet's tasks. One-time tasks do not recur. |
+| Pet workload ranking | `Scheduler.rank_pet_workloads()` | Ranks pets by pending task minutes due on or before the scheduler's date; completed and future-due tasks are excluded. |
+| Plan explanation | `Scheduler.explain_plan()` | Describes scheduled tasks, the priority/deadline rationale, time-budget omissions, and detected conflicts. |
 
 ## 📸 Demo Walkthrough
 
