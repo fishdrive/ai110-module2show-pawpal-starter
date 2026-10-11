@@ -20,6 +20,55 @@ def test_pet_task_relationship_and_owner_task_collection():
     assert owner.get_all_tasks() == []
 
 
+def test_owner_json_round_trip_preserves_pets_tasks_and_dates(tmp_path):
+    owner = Owner(
+        "Jordan",
+        email="jordan@example.com",
+        available_minutes_per_day=75,
+        preferences={"walk_time": "morning"},
+    )
+    pet = Pet(
+        "Mochi",
+        "dog",
+        breed="Shiba Inu",
+        age=3,
+        weight=8.5,
+        special_needs="Sensitive stomach",
+    )
+    owner.add_pet(pet)
+    due_time = datetime(2026, 10, 10, 9, 0)
+    scheduled_start = datetime(2026, 10, 10, 8, 0)
+    pet.add_task(
+        Task(
+            "Medication",
+            "medication",
+            5,
+            pet=pet,
+            priority="high",
+            due_time=due_time,
+            scheduled_start=scheduled_start,
+            frequency="daily",
+            notes="Give with food",
+        )
+    )
+    file_path = tmp_path / "data.json"
+
+    owner.save_to_json(file_path)
+    loaded_owner = Owner.load_from_json(file_path)
+
+    assert loaded_owner.name == owner.name
+    assert loaded_owner.available_minutes_per_day == 75
+    assert loaded_owner.preferences == {"walk_time": "morning"}
+    loaded_pet = loaded_owner.pets[0]
+    assert loaded_pet.get_summary() == pet.get_summary()
+    loaded_task = loaded_pet.tasks[0]
+    assert loaded_task.pet is loaded_pet
+    assert loaded_task.due_time == due_time
+    assert loaded_task.scheduled_start == scheduled_start
+    assert loaded_task.frequency == "daily"
+    assert loaded_task.notes == "Give with food"
+
+
 def test_recurrence_logic_daily_task_creates_following_day():
     pet = Pet("Mochi", "dog")
     task = Task(

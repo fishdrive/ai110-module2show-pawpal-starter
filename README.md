@@ -1,112 +1,121 @@
-# PawPal+ (Module 2 Project)
+# PawPal+
 
-You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
+PawPal+ is a pet-care planner built with Python and Streamlit. Add pets and care tasks, filter tasks by pet, type, or status, and generate a daily plan based on priority, deadlines, and the owner's available time.
 
-## Scenario
+## Features
 
-A busy pet owner needs help staying consistent with pet care. They want an assistant that can:
+- Manage an owner's pet list and add pets with basic profile information.
+- Create care tasks with a pet, type, duration, priority, deadline, and recurrence frequency.
+- Filter the task list by pet, task type, and completion status; view matching tasks in deadline order.
+- Generate a daily plan from 8:00 AM by default. The scheduler excludes completed and future-due tasks, prioritizes high-priority tasks, and skips tasks that do not fit the owner's time budget.
+- View scheduling warnings for overlapping tasks, missed deadlines, and time-budget overruns.
+- Review a plan explanation, including why tasks were prioritized and which tasks were skipped.
+- Use the Python scheduling API to create the next daily or weekly occurrence when a recurring task is marked complete, and to rank pets by pending care minutes.
+- Save owner, pet, and task data to `data.json` so it is restored between app sessions.
 
-- Track pet care tasks (walks, feeding, meds, enrichment, grooming, etc.)
-- Consider constraints (time available, priority, owner preferences)
-- Produce a daily plan and explain why it chose that plan
+## Quick Start
 
-Your job is to design the system first (UML), then implement the logic in Python, then connect it to the Streamlit UI.
-
-## What you will build
-
-Your final app should:
-
-- Let a user enter basic owner + pet info
-- Let a user add/edit tasks (duration + priority at minimum)
-- Generate a daily schedule/plan based on constraints and priorities
-- Display the plan clearly (and ideally explain the reasoning)
-- Include tests for the most important scheduling behaviors
-
-## Getting started
-
-### Setup
+Create an environment and install the app dependencies:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
 ```
 
-### Suggested workflow
-
-1. Read the scenario carefully and identify requirements and edge cases.
-2. Draft a UML diagram (classes, attributes, methods, relationships).
-3. Convert UML into Python class stubs (no logic yet).
-4. Implement scheduling logic in small increments.
-5. Add tests to verify key behaviors.
-6. Connect your logic to the Streamlit UI in `app.py`.
-7. Refine UML so it matches what you actually built.
-
-## 🖥️ Sample Output
-
-```
-Today's Schedule
-Owner: Jordan | Date: 2026-10-10
-08:00 - Breakfast for Prime (10 min, high priority)
-08:10 - Medication for Timus (5 min, high priority)
-08:15 - Morning walk for Timus (30 min, medium priority)
-```
-
-## 🧪 Testing PawPal+
-
-//command to run tests is python3 -m pytest
-//Tests covered: 
-Pet/task ownership, adding and removing tasks, and collecting an owner’s tasks.
-Daily and weekly recurrence, including creating the next occurrence, undated daily tasks, one-time tasks, and preventing repeat completion from creating duplicates.
-Schedule priority ordering, daily time-budget limits, assigned start times, and reporting skipped tasks.
-Chronological deadline sorting, with undated tasks last.
-Ranking pets by pending task minutes while excluding completed and future-due tasks.
-Conflict warnings for overlapping tasks on the same pet or different pets, plus daily budget overruns.
-Task validation and filtering by pet object or name, task type, and completion status.
+Start the Streamlit app:
 
 ```bash
-Sample test output:
+python3 -m streamlit run app.py
+```
+
+To run the terminal demonstration instead:
+
+```bash
+python3 main.py
+```
+
+## Using the App
+
+1. Enter the owner's name and daily care-time budget.
+2. Add one or more pets.
+3. Add each pet's care tasks, including duration, priority, deadline, and frequency.
+4. Use the pet, type, and status filters to find tasks. The task table is ordered by deadline, with tasks that have no deadline last.
+5. Select **Generate schedule** to create the daily plan. Review any warnings and expand **Plan explanation** for the scheduler's rationale.
+
+## Priority Indicators
+
+The task list and generated schedule color the **Priority** cell to make urgency easy to scan: high priority uses bright coral, medium uses amber, and low uses muted slate. The priority text remains visible alongside its color. In `app.py`, `style_priority_cells()` returns the cell styles, `pandas.DataFrame.style.apply()` applies them to each table, and Streamlit's `st.table()` renders the styled tables. 
+
+## Persistence
+
+When the app starts, it loads the owner, pets, and tasks from `data.json` in the project folder. If the file does not exist, PawPal+ starts with a new owner profile. Changes to the owner's name or time budget, and newly added pets or tasks, are saved back to JSON. Task deadlines and scheduled times are stored as ISO-formatted datetimes. The runtime data file is ignored by Git because it can contain personal owner and pet information.
+
+Files updated for persistence: `pawpal_system.py` adds `Owner.save_to_json()` and `Owner.load_from_json()`; `app.py` loads saved data at startup and saves changes; `tests/test_pawpal.py` verifies a JSON round trip; `.gitignore` excludes `data.json`; and this README documents the workflow.
+
+## Scheduling Algorithms
+
+| Capability | Method | Behavior |
+|---|---|---|
+| Daily planning | `Scheduler.generate_daily_plan()` | Sorts eligible incomplete tasks, assigns sequential start times, and stays within the owner's daily minute budget. Tasks that do not fit are recorded as skipped. |
+| Priority ordering | `Scheduler.sort_tasks()` | Sorts by high, medium, then low priority; breaks ties by deadline and title. |
+| Deadline ordering | `Scheduler.sort_by_time()` | Sorts chronologically by deadline and places undated tasks last. |
+| Task filtering | `Scheduler.filter_tasks()` | Filters by pet object or case-insensitive pet name, task type, and completion status. |
+| Conflict warnings | `Scheduler.detect_conflicts()` | Returns messages for overlapping tasks, including same-pet and cross-pet overlaps, missed deadlines, and budget overruns. |
+| Overdue lookup | `Scheduler.get_overdue_tasks()` and `Task.is_overdue()` | Finds incomplete tasks with deadlines earlier than the current time. |
+| Recurrence | `Task.mark_task_complete()` | Marks a task complete and creates the next daily or weekly occurrence for its pet. One-time tasks do not recur. |
+| Pet workload ranking | `Scheduler.rank_pet_workloads()` | Ranks pets by pending task minutes due by the scheduler's date; completed and future-due tasks are excluded. Tasks without a deadline are included. |
+| Plan explanation | `Scheduler.explain_plan()` | Summarizes the plan, priority rationale, budget usage, skipped tasks, and conflicts. |
+
+Recurring-task completion and workload ranking are implemented in the Python API; the current Streamlit interface does not yet include controls for marking a task complete or viewing workload rankings.
+
+## Demo Walkthrough
+
+The Streamlit interface lets the owner set a name and daily care-time budget, add pets, and create tasks with a type, duration, priority, deadline, and frequency. The task list can be filtered by pet, type, and completion status; matching tasks are shown in deadline order.
+
+Example workflow:
+
+1. Add Mochi, a dog, and Whiskers, a cat.
+2. Add Mochi's morning walk and medication, then add Whiskers' breakfast task.
+3. Filter the task list to Mochi's pending tasks, or sort the full list by deadline.
+4. Select **Generate schedule**. The scheduler considers incomplete tasks due by today, prioritizes high-priority tasks and earlier deadlines, assigns sequential start times from 8:00 AM by default, and respects the owner's time budget.
+5. Review the daily plan, any conflict warnings, and the expandable plan explanation. The warning logic identifies overlaps, including tasks for the same or different pets, deadline overruns, and budget overruns.
+
+The terminal demo also exercises deadline sorting, pet-name filtering, and duplicate-time conflict detection. Example output from `python3 main.py`:
 
 ```text
-$ python3 -m pytest
-tests/test_pawpal.py .........                                            [100%]
+Today's Schedule
+Owner: JJ | Date: 2026-10-10
+08:00 - Breakfast for Whiskers (10 min, high priority)
+08:10 - Medication for Mochi (5 min, high priority)
+08:15 - Morning walk for Mochi (30 min, medium priority)
 
-9 passed in 0.04s
+Tasks sorted by deadline
+08:30 - Breakfast
+09:00 - Medication
+10:00 - Morning walk
+
+Pending tasks for Mochi
+Morning walk (30 min)
+Medication (5 min)
+
+Conflict check
+Warning: Morning walk (Mochi) overlaps with Medication (Mochi) [same pet: Mochi].
 ```
-//Confidence is 5 stars considering 9 tests were passed in 0.04s. 
 
-# Run with coverage:
-pytest --cov
+## Tests
+
+Install the dependencies and run the test suite:
+
+```bash
+python3 -m pytest
 ```
-Installed pytest-cov and reran python3 -m pytest --cov successfully: 9 tests passed. Total coverage is 92% (pawpal_system.py: 87%; tests: 100%)
 
+For coverage reporting, install the optional `pytest-cov` plugin and run:
 
-
-
-## 📐 Smarter Scheduling
-
-| Feature | Method(s) | Notes |
-|---------|-----------|-------|
-| Daily plan generation | `Scheduler.generate_daily_plan()` | Schedules incomplete tasks due by the selected date, starting at 8:00 AM by default, without exceeding the owner's daily time budget. |
-| Priority sorting | `Scheduler.sort_tasks()` | Orders tasks by high, medium, then low priority; ties use earlier deadlines and task titles. |
-| Deadline sorting | `Scheduler.sort_by_time()` | Orders tasks by deadline, placing tasks without a deadline last. |
-| Task filtering | `Scheduler.filter_tasks()` | Filters by pet instance or name, task type, and completion status. |
-| Conflict detection | `Scheduler.detect_conflicts()` | Warns about overlapping tasks, including same-pet and cross-pet conflicts, missed deadlines, and budget overruns. |
-| Overdue task lookup | `Scheduler.get_overdue_tasks()`, `Task.is_overdue()` | Finds incomplete tasks whose deadlines have passed. |
-| Recurring tasks | `Task.mark_task_complete()` | Completing a daily or weekly task creates the next occurrence and adds it to the pet's tasks. One-time tasks do not recur. |
-| Pet workload ranking | `Scheduler.rank_pet_workloads()` | Ranks pets by pending task minutes due on or before the scheduler's date; completed and future-due tasks are excluded. |
-| Plan explanation | `Scheduler.explain_plan()` | Describes scheduled tasks, the priority/deadline rationale, time-budget omissions, and detected conflicts. |
-
-## 📸 Demo Walkthrough
-
-Describe your app in numbered steps so a reader can follow along without watching a video:
-
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
-
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+```bash
+python3 -m pip install pytest-cov
+python3 -m pytest --cov
+```
 
 

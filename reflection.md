@@ -15,8 +15,7 @@
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+//My scheduler had to consider task priority, deadlines, duration, completion status, and the owner's daily time budget. I prioritized high-priority tasks and earlier deadlines while keeping the plan within the time budget. A constraint is that owner preferences are stored but are not currently used by the scheduling algorithm.
 
 **b. Tradeoffs**
 
@@ -29,13 +28,12 @@
 
 **a. How you used AI**
 
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+//I used AI for advice on the third type of algorithm I wanted to create. It also helped me clean up all of my code into something more neat and readable. It helped me debug some of my code and clean up the overall UI. The types of prompts that were most helpful for me were prompts like, "How could I make so and so better without fully changing the idea?". 
+
 
 **b. Judgment and verification**
 
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
+//When I asked Ai for some methods that might useful for a specific class, I got a few that seemed redundant. I did not directly add all of the suggested methods it wanted. I re-evaluated by only adding the ones that seemed important to me. 
 
 ---
 
@@ -43,13 +41,14 @@
 
 **a. What you tested**
 
-- What behaviors did you test?
-- Why were these tests important?
+I tested that pets and tasks stay connected correctly when tasks are added or removed and that an owner can collect tasks across their pets. I tested multiple types of completion, including creation of the next recurring task and prevention of duplicate occurrences. I also tested priority-based scheduling within the owner's time budget, chronological deadline sorting, pet workload ranking, filtering by pet/type/status, and conflict warnings for overlapping tasks and budget overruns.
+
+These tests were important because they check the relationships and scheduling rules the app relies on. They help catch errors such as losing a task when it is reassigned, repeating a task incorrectly, scheduling more care than the owner has time for, or failing to warn about overlapping appointments. The tests also verify edge cases like undated tasks, completed tasks, and future-due tasks so the plan is more dependable.
 
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
+//I'm very confident my scheduler works well. 
+//If I had more time, I would test a task that fills multiple types of time budgets, including daily and a long task being skipped while a shorter task executes. I would also verify that completed and future-due tasks are excluded from today's plan, that back-to-back tasks or a task ending exactly at its deadline do not produce false conflict warnings, and that recurring tasks continue correctly across month or year boundaries.
 
 ---
 
@@ -57,12 +56,13 @@
 
 **a. What went well**
 
-- What part of this project are you most satisfied with?
+//I was happy that this project didn't have too many hiccups. Most of the directions I gave to the agent were clear and worked well in terms of getting things properly done. Overall, this project worked well with my vision for it. 
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+//I believe in this project, we had a sort of rubric we had to follow that made it a bit more simple to construct this application. In the future, I'd like to try something independently to see how I would do without direct commands to help me build something properly. 
 
 **c. Key takeaway**
 
-- What is one important thing you learned about designing systems or working with AI on this project?
+//In this project, something important I learned was making sure AI was properly working based off of my creative direction. Whilst something technically worked, it wasn't the result I wanted which meant I had to do it again. One of the most important things about working with AI is making sure it can properly display your vision. 
+

@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
+from pathlib import Path
 
 
 @dataclass
@@ -44,6 +46,93 @@ class Owner:
         if minutes < 0:
             raise ValueError("Available minutes cannot be negative.")
         self.available_minutes_per_day = minutes
+
+    def save_to_json(self, file_path: str | Path = "data.json") -> None:
+        """Save this owner and nested pet tasks to a JSON file."""
+        data = {
+            "name": self.name,
+            "email": self.email,
+            "phone": self.phone,
+            "available_minutes_per_day": self.available_minutes_per_day,
+            "preferences": self.preferences,
+            "pets": [
+                {
+                    "name": pet.name,
+                    "species": pet.species,
+                    "breed": pet.breed,
+                    "age": pet.age,
+                    "weight": pet.weight,
+                    "special_needs": pet.special_needs,
+                    "tasks": [
+                        {
+                            "title": task.title,
+                            "task_type": task.task_type,
+                            "duration_minutes": task.duration_minutes,
+                            "priority": task.priority,
+                            "due_time": task.due_time.isoformat()
+                            if task.due_time
+                            else None,
+                            "scheduled_start": task.scheduled_start.isoformat()
+                            if task.scheduled_start
+                            else None,
+                            "frequency": task.frequency,
+                            "is_completed": task.is_completed,
+                            "notes": task.notes,
+                        }
+                        for task in pet.tasks
+                    ],
+                }
+                for pet in self.pets
+            ],
+        }
+        path = Path(file_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+    @classmethod
+    def load_from_json(cls, file_path: str | Path = "data.json") -> Owner:
+        """Load an owner and nested pet tasks from a JSON file."""
+        data = json.loads(Path(file_path).read_text(encoding="utf-8"))
+        owner = cls(
+            name=data["name"],
+            email=data.get("email", ""),
+            phone=data.get("phone", ""),
+            available_minutes_per_day=data.get("available_minutes_per_day", 120),
+            preferences=data.get("preferences", {}),
+        )
+        for pet_data in data.get("pets", []):
+            pet = Pet(
+                name=pet_data["name"],
+                species=pet_data["species"],
+                breed=pet_data.get("breed", ""),
+                age=pet_data.get("age", 0),
+                weight=pet_data.get("weight", 0.0),
+                special_needs=pet_data.get("special_needs", ""),
+            )
+            owner.add_pet(pet)
+            for task_data in pet_data.get("tasks", []):
+                task = Task(
+                    title=task_data["title"],
+                    task_type=task_data["task_type"],
+                    duration_minutes=task_data["duration_minutes"],
+                    pet=pet,
+                    priority=task_data.get("priority", "medium"),
+                    due_time=(
+                        datetime.fromisoformat(task_data["due_time"])
+                        if task_data.get("due_time")
+                        else None
+                    ),
+                    scheduled_start=(
+                        datetime.fromisoformat(task_data["scheduled_start"])
+                        if task_data.get("scheduled_start")
+                        else None
+                    ),
+                    frequency=task_data.get("frequency", "once"),
+                    is_completed=task_data.get("is_completed", False),
+                    notes=task_data.get("notes", ""),
+                )
+                pet.add_task(task)
+        return owner
 
 
 @dataclass

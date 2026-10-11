@@ -5,7 +5,7 @@ from pawpal_system import Owner, Pet, Scheduler, Task
 
 today = date.today()
 owner = Owner(
-    name="Jordan Fisher",
+    name="JJ",
     email="jordan@example.com",
     available_minutes_per_day=90,
 )

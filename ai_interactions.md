@@ -30,15 +30,13 @@
 
 > Compare two different prompts (or two different models) on the same task.
 
-| | Option A | Option B |
-|-|----------|----------|
-| **Model / tool used** | | |
-| **Prompt** | | |
-| **Response summary** | | |
-| **What was useful** | | |
-| **Problems noticed** | | |
-| **Decision** | | |
+//Question at Hand. After seeing the information for the PawPal app, I want to create a rescheduling weekly tasks algorithm, and show me a viable solution. 
 
-**Which approach did you use in your final implementation and why?**
+//CHAT GPT: CHAT GPT gave me a very cluttered and confusing solution. It had too many words and overexplanations for me to deem its solution viable. I felt overwhelmed looking at the response. The raw code was useful, but the explanations for it seemed very lenghty.
 
-<!-- Your conclusion -->
+//CLAUDE AI: Claude first explained what it was doing and then broke down the each single step of the algorithm. It explained why it was needed and which step it belonged in. It showed me a sample demo that utilized every part of the algorithm provided. It then listed me some tradeoffs and reasons why I might want to try something else.
+
+//Final Implementation: CLAUDE AI. Based off the explanations alone, I used CLAUDE's suggestions because it was very clear and it made the most sense for me to implement something that I had a greater understanding in. 
+
+
+

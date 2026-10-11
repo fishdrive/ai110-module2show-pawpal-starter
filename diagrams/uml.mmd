@@ -3,7 +3,7 @@ classDiagram
         +str name
         +str email
         +str phone
-        +list pets
+        +list~Pet~ pets
         +int available_minutes_per_day
         +dict preferences
         +add_pet(pet) None
@@ -19,7 +19,7 @@ classDiagram
         +int age
         +float weight
         +str special_needs
-        +list tasks
+        +list~Task~ tasks
         +add_task(task) None
         +remove_task(task) None
         +get_pending_tasks() list
@@ -32,8 +32,8 @@ classDiagram
         +Pet? pet
         +int duration_minutes
         +str priority
-        +datetime due_time
-        +datetime scheduled_start
+        +datetime? due_time
+        +datetime? scheduled_start
         +str frequency
         +bool is_completed
         +str notes
@@ -47,14 +47,14 @@ classDiagram
 
     class Scheduler {
         +Owner owner
-        +list daily_plan
-        +list skipped_tasks
+        +list~Task~ daily_plan
+        +list~Task~ skipped_tasks
         +date date
         +time start_time
         +generate_daily_plan() list
         +sort_tasks(tasks=None) list
         +sort_by_time(tasks=None) list
-        +rank_pet_workloads() list
+        +rank_pet_workloads() list~tuple~Pet,int~~
         +detect_conflicts() list
         +get_overdue_tasks() list
         +filter_tasks(pet: Pet | str=None, task_type=None, status=None) list
@@ -63,5 +63,7 @@ classDiagram
 
     Owner "1" --> "0..*" Pet : owns
     Pet "0..1" --> "0..*" Task : assigned
+    Task ..> Task : creates next occurrence
     Scheduler "1" --> "1" Owner : plans for
-    Scheduler "1" --> "0..*" Task : schedules
+    Scheduler "1" --> "0..*" Task : daily plan
+    Scheduler "1" --> "0..*" Task : skips
